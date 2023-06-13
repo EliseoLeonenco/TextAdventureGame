@@ -21,7 +21,7 @@ public class StoryManager {
 	GameFrame gameFrame;
 	InGamePanel inGamePanel;
 	Player player = new Player("Player", 100, 100);
-	Monster werewolf_Storage = new Monster("Werewolf", 160, 35, 30, 75), ghoul1_Lounge = new Monster("Ghoul1", 65, 14, 10, 65), ghoul2_Lounge = new Monster("Ghoul2", 70, 14, 10, 65), 
+	Monster werewolf_Storage = new Monster("Werewolf", 160, 35, 30, 75), ghoul1_Lounge = new Monster("Ghoul1", 65, 14, 10, 67), ghoul2_Lounge = new Monster("Ghoul2", 70, 14, 10, 67), 
 			skeleton_Dining = new Monster("Skeleton", 110, 28, 24, 85), undead1_Kitchen = new Monster("Undead1", 80, 16, 12, 60), undead2_Kitchen = new Monster("Undead2", 75, 16, 12, 60), 
 			undead3_Kitchen = new Monster("Undead3", 85, 16, 12, 60), goblin_Bathroom = new Monster("Goblin", 350, 1, 0, 0), werewolf_Ballroom = new Monster("Werewolf", 180, 38, 33, 70), 
 			hunter_Church = new Monster("Corrupted Hunter", 240, 17, 10, 70);
@@ -38,7 +38,7 @@ public class StoryManager {
 			chestplateTaken=false, helmetTaken=false, greatSwordTaken=false, reEnteringSecretRoom=false, storageRoomWerewolfDefeated=false, ghoulsDefeated=false, 
 			skeletonDefeated=false, undeadDefeated=false, ballroomWerewolfDefeated=false, goblinDefeated=false, hunterDefeated=false, reEnterChurch=false;
 	Clip inGameMusicClip, combatClip, finalBossClip;
-	Consumable largeHealthPotion= new Consumable("Large Health Potion", 60, 0), smallHealthPotion = new Consumable("Small Health Potion", 35, 0);
+	Consumable largeHealthPotion= new Consumable("Large Health Potion", 60, 3), smallHealthPotion = new Consumable("Small Health Potion", 35, 2);
 	int monsterDamage, monsterDamage2, monsterDamage3, playerDamage, attackAccuracy;
 	private Timer animationTimer;
 	
@@ -52,7 +52,7 @@ public class StoryManager {
 		player.setWeapon(fists);
 		Game.getGameFrame().getInGamePanel().changeHealthNum(player.getHealth());
 		Game.getGameFrame().getInGamePanel().changeWeaponName(player.getWeapon().getName());
-		instructions();
+		enterManorHall();
 	}
 	
 	public void selectPosition(String command) {
@@ -318,7 +318,7 @@ public class StoryManager {
 			break; 
 		case "enterLibrary":
 			switch(command) {
-			case "inspect bookshelf", "inspect the bookshelf", "inspect shelf", "inspect the shelf": inspectLibraryBookshelf(); break;
+			case "inspect bookshelf", "inspect the bookshelf", "inspect shelf", "inspect the shelf": inspectLibraryBookshelf(); break; 
 			case "inspect table", "inspect the table": 
 				if(librarySpellbookTaken==false&&libraryPotionsTaken==false) {
 					inspectLibraryTable1(); break;
@@ -340,7 +340,12 @@ public class StoryManager {
 				}
 			break;
 			}
-			break;			
+			break;	
+		case "inspectLibraryBookshelf":
+			switch(command) {
+			case "back": enterLibrary(); break;
+			}
+			break;
 		case "inspectLibraryTable1":
 			switch(command) {
 			case "take potions", "take the potions", "take potion", "take the potion", "pick up potions", "pick up the potions", "pick up potion", "pick up the potion", "pickup potions", "pickup the potions", "pickup potion", "pickup the potion": 
@@ -434,7 +439,7 @@ public class StoryManager {
 			case "2": enterManorHall(); break;
 			}
 			break;
-		case "changeWeapon_Fire":
+		case "changeWeapon_Fireplace":
 			switch(command) {
 			case "1": 
 				if (secretRoomDaggerTaken==true) {
@@ -465,6 +470,8 @@ public class StoryManager {
 				if(greatSwordTaken==true) {
 					takeWeapon6_Fireplace(); break;
 				}
+				break;
+			case "7": enterManorHall(); break;
 			}
 			break;
 		case "loungePostBattle":
@@ -970,14 +977,19 @@ public class StoryManager {
 		case "enterBathroomPostBattle":
 			switch(command) {
 			case "inspect goblin", "inspect the goblin", "inspect", "inspect corpse", "inspect the corpse": 
-				inspectGoblin(); break;
+				if(rustyKeyTaken==true) {
+					inspectGoblinEmpty(); break;
+				} else if(rustyKeyTaken==false) {
+					inspectGoblin(); break;
+				}
+				break;
 			case "leave", "leave bathroom", "leave the bathroom", "enter crossing corridor", "enter the crossing corridor", "enter crossingcorridor", "enter the crossingcorridor": 
 				enterCrossingCorridor(); break;
 			} 
 			break;
 		case "bathroomPostBattle":
 			switch(command) {
-			case "inspect goblin", "inspect corpse": 
+			case "inspect goblin", "inspect the goblin", "inspect", "inspect corpse", "inspect the corpse": 
 				if(rustyKeyTaken==true) {
 					inspectGoblinEmpty(); break;
 				} else if(rustyKeyTaken==false) {
@@ -1036,7 +1048,7 @@ public class StoryManager {
 			case "next": bathroomPostBattle(); break;
 			}
 			break;	
-		case "enterBallroom":
+		case "enterBallroom": 
 			switch(command) {
 			case "attack werewolf", "attack", "attack the werewolf", "fight", "fight the werewolf", "fight werewolf":  
 				engageCombat_BallroomWerewolf(); break;
@@ -1053,7 +1065,7 @@ public class StoryManager {
 			break;		
 		case "enterBallroomPostBattle":
 			switch(command) {
-			case "open chest", "open the chest", "interact chest", "interact with chest": 
+			case "open chest", "open the chest", "interact chest", "interact with chest", "inspect chest", "inspect the chest": 
 				if(churchKeyTaken==true) {
 					openChestEmpty(); break;
 				} else if(churchKeyTaken==false) {
@@ -1163,7 +1175,7 @@ public class StoryManager {
 		case "inspectGoblin":
 			switch(command) {
 			case "take key", "take the key", "pick up key", "pick up the key", "pickup key", "pickup the key": 
-				inspectGoblin(); break; 
+				takeRustyKey(); break; 
 			case "back": enterBathroomPostBattle(); break;
 			} 
 			break;
@@ -1191,10 +1203,12 @@ public class StoryManager {
 			case "back": enterKitchenPostBattle(); break;
 			}
 			break;
-		case "enterEntranceHall":
+		case "enterEntranceHall": 
 			switch(command) {
 			case "leave", "leave manor", "leave the manor": 
 				exitManor(); break;
+			case "enter manor", "enter the manor": 
+				enterManorHall(); break;
 			case "open closet", "open the closet", "open closet door", "open the closet door": 
 				if(rustyKeyTaken==true) {
 					if(amuletTaken==false) {
@@ -1218,7 +1232,7 @@ public class StoryManager {
 			case "back": enterEntranceHall(); break;
 			}
 			break;
-			case "exitManor":
+		case "exitManor":
 			switch(command) {
 			case "enter forest", "enter the forest", "enter pathway", "enter the pathway": 
 				crossRoad1(); break;
@@ -1226,7 +1240,7 @@ public class StoryManager {
 				enterManorHall(); break;
 			}
 			break;
-		case "crossRoad1":
+		case "crossRoad1": 
 			switch(command) {
 			case "go north", "north": crossRoad2(); break;
 			case "go east", "east": enterLake(); break;
@@ -1237,7 +1251,7 @@ public class StoryManager {
 			switch(command) {
 			case "enter manor", "enter the manor":  
 				enterManorHall(); break;
-			case "enter forest", "enter the forest", "enter pathway", "enter the pathway":  
+			case "enter forest", "enter the forest", "enter pathway", "enter the pathway", "go west", "west":  
 				crossRoad1(); break;
 			}
 			break;
@@ -1287,15 +1301,16 @@ public class StoryManager {
 					takeWeapon5_Lake(); break;
 				}
 				break;
+			case "6": crossRoad1(); break;
 			}
 			break;	
-		case "crossRoad2":
+		case "crossRoad2": 
 			switch(command) {
 			case "go north-east", "go north east", "go northeast", "north-east", "north east", "northeast": 
 				outsideChurch(); break;
 			case "go north", "north": purificationGrounds(); break;
 			case "go west", "west": caravan(); break;
-			case "go south", "south": crossRoad2(); break;
+			case "go south", "south": crossRoad1(); break;
 			}
 			break;
 		case "caravan":
@@ -1365,7 +1380,7 @@ public class StoryManager {
 					}		
 				}
 			break;
-			case "back", "leave", "go south-west", "go south west", "go southwest", "south-west", "south west", "southwest": 
+			case "back", "leave", "leave church", "leave the church", "go south-west", "go south west", "go southwest", "south-west", "south west", "southwest": 
 				crossRoad2(); break;
 			}
 			break;
@@ -1446,7 +1461,7 @@ public class StoryManager {
 					winGame(); break;
 				} 
 				break;
-			case "leave": crossRoad2(); break;
+			case "leave", "leave shrine", "leave the shrine", "back": crossRoad2(); break;
 			}
 			break;		
 			}
@@ -1517,6 +1532,7 @@ public class StoryManager {
 	}
 
 	public void secretRoomTakeDagger() {
+		player.setPosition("secretRoomTakeDagger");
 		animateText("You pick up the ceremonial dagger.");
 	    secretRoomDaggerTaken=true;
 	    new Thread(new Runnable() {
@@ -1540,6 +1556,7 @@ public class StoryManager {
 	}
 	
 	public void secretRoomTakePotions() {
+		player.setPosition("secretRoomTakePotions");
 		animateText("You pick up three small health potions and a small pouch of gold next to it.");
 		player.addGold(85);
 		Game.getGameFrame().getInGamePanel().changeGoldNum(player.getGold());
@@ -1606,6 +1623,8 @@ public class StoryManager {
 	
 // STORAGE WEREWOLF
 	public void engageCombat_StorageWerewolf() { 
+		player.setPosition("engageCombat_StorageWerewolf");
+
 		inGameMusicClip.close();
 		playCombatSoundtrack();
 		
@@ -1647,10 +1666,17 @@ public class StoryManager {
 	}
 	
 	public void monsterTakesDamage_StorageWerewolf() {  
+		player.setPosition("monsterTakesDamage_StorageWerewolf");
+
 		int accuracy = new java.util.Random().nextInt(100)+1;
 		
 		if (accuracy<attackAccuracy) {
 			werewolf_Storage.takeDamage(player.getDamage());
+			
+			if(werewolf_Storage.getHealth() < 0) {
+				werewolf_Storage.setHealth(0);
+			}
+			
 			animateText("You attack the Werewolf, it takes " + player.getDamage() + " damage." + "\n\nWerewolf health = " + werewolf_Storage.getHealth());
 			new Thread(new Runnable() {
 		        public void run() {
@@ -1690,6 +1716,8 @@ public class StoryManager {
 	}
 	
 	public void playerTakesDamage_StorageWerewolf() {
+		player.setPosition("playerTakesDamage_StorageWerewolf");
+		
 		int monsterDamage = new java.util.Random().nextInt(werewolf_Storage.getDamageMax() - werewolf_Storage.getDamageMin() + 1) + werewolf_Storage.getDamageMin();	
 		int accuracy = new java.util.Random().nextInt(100)+1;
 		
@@ -1761,6 +1789,8 @@ public class StoryManager {
 	}
 	
 	public void useSmallHealthPotion_StorageWerewolf() { 
+		player.setPosition("useSmallHealthPotion_StorageWerewolf");
+		
 		player.heal(smallHealthPotion.getHealthGain());
 		if(player.getHealth() > player.getMaxHealth()) {
 			player.setHealth(player.getMaxHealth());
@@ -1781,6 +1811,8 @@ public class StoryManager {
 	}
 	
 	public void useLargeHealthPotion_StorageWerewolf() { 
+		player.setPosition("useLargeHealthPotion_StorageWerewolf");
+		
 		player.heal(largeHealthPotion.getHealthGain());
 		if(player.getHealth() > player.getMaxHealth()) {
 			player.setHealth(player.getMaxHealth());
@@ -1802,6 +1834,8 @@ public class StoryManager {
 	
 	// LOUNGE GHOULS
 	public void engageCombat_Ghouls() { 
+		player.setPosition("engageCombat_Ghouls");
+		
 		inGameMusicClip.close();
 		playCombatSoundtrack();
 		
@@ -1851,29 +1885,38 @@ public class StoryManager {
 	}
 	
 	public void monsterTakesDamage_Ghoul1() {
+		player.setPosition("monsterTakesDamage_Ghoul1");
+		
 		int accuracy = new java.util.Random().nextInt(100)+1;
 		
 		if (accuracy<attackAccuracy) {
 			ghoul1_Lounge.takeDamage(player.getDamage());
-		animateText("You attack the first Ghoul, it takes " + player.getDamage() + " damage" + "\n\nFirst Ghoul health = " + ghoul1_Lounge.getHealth());
-		new Thread(new Runnable() {
-	        public void run() {
-	            try {
-	                Thread.sleep(7000);
-	                if(ghoul1_Lounge.isDead()==true && ghoul2_Lounge.isDead()==true) {
-	                	ghoulsDefeated=true;
-	                	defeatedGhouls();
-	                } else if(ghoul1_Lounge.isDead()==true) {
-	                	defeatedGhoul1();
-	                } else if(ghoul1_Lounge.isDead()==false || ghoul2_Lounge.isDead()==false) {
-	                	playerTakesDamage_Ghouls();
-	                }
-	            } catch (InterruptedException e) {
-	                e.printStackTrace();
-	            }
-	        }
-	    }).start();
+			
+			if(ghoul1_Lounge.getHealth() < 0) {
+				ghoul1_Lounge.setHealth(0);
+			}
+			
+			animateText("You attack the first Ghoul, it takes " + player.getDamage() + " damage" + "\n\nFirst Ghoul health = " + ghoul1_Lounge.getHealth());
+			
+			new Thread(new Runnable() {
+			    public void run() {
+			        try {
+			            Thread.sleep(7000);
+			            if(ghoul1_Lounge.isDead()==true && ghoul2_Lounge.isDead()==true) {
+			            	ghoulsDefeated=true;
+			            	defeatedGhouls();
+			            } else if(ghoul1_Lounge.isDead()==true) {
+			            	defeatedGhoul1();
+			            } else if(ghoul1_Lounge.isDead()==false || ghoul2_Lounge.isDead()==false) {
+			            	playerTakesDamage_Ghouls();
+			            }
+			        } catch (InterruptedException e) {
+			            e.printStackTrace();
+			        }
+			    }
+			}).start();
 		} else if(accuracy>attackAccuracy) {
+			
 			animateText("The Ghoul dodges your attack! "
 					+ "You missed!"
 					+ "\n\nFirst Ghoul health = " + ghoul1_Lounge.getHealth());
@@ -1900,10 +1943,17 @@ public class StoryManager {
 	}
 
 	public void monsterTakesDamage_Ghoul2() {
+		player.setPosition("monsterTakesDamage_Ghoul2");
+		
 		int accuracy = new java.util.Random().nextInt(100)+1;
 		
 		if (accuracy<attackAccuracy) {
 			ghoul2_Lounge.takeDamage(player.getDamage());
+			
+			if(ghoul2_Lounge.getHealth() < 0) {
+				ghoul2_Lounge.setHealth(0);
+			}
+			
 			animateText("You attack the second Ghoul, it takes " + player.getDamage() + " damage" + "\n\nSecond Ghoul health = " + ghoul2_Lounge.getHealth());
 			new Thread(new Runnable() {
 		        public void run() {
@@ -1925,7 +1975,7 @@ public class StoryManager {
 		} else if(accuracy>attackAccuracy) {
 			animateText("The Ghoul dodges your attack! "
 					+ "You missed!"
-					+ "\n\nFirst Ghoul health = " + ghoul1_Lounge.getHealth());
+					+ "\n\nSecond Ghoul health = " + ghoul2_Lounge.getHealth());
 			new Thread(new Runnable() {
 		        public void run() {
 		            try {
@@ -1947,6 +1997,8 @@ public class StoryManager {
 	}
 	
 	public void playerTakesDamage_Ghouls() {
+		player.setPosition("playerTakesDamage_Ghouls");
+		
 		int monsterDamage = new java.util.Random().nextInt(ghoul1_Lounge.getDamageMax() - ghoul1_Lounge.getDamageMin() + 1) + ghoul1_Lounge.getDamageMin();
 		int monsterDamage2 = new java.util.Random().nextInt(ghoul2_Lounge.getDamageMax() - ghoul2_Lounge.getDamageMin() + 1) + ghoul2_Lounge.getDamageMin();
 		int accuracy = new java.util.Random().nextInt(100)+1;
@@ -1989,8 +2041,8 @@ public class StoryManager {
 		        }
 		    }).start();
 		} else if(accuracy>ghoul1_Lounge.getAttackAccuracy()) {
-			animateText("The Undead monsters attempt to strike you."
-					+ "\nYou dodge the Undead monster's attacks!");
+			animateText("The Ghoul monsters attempt to strike you."
+					+ "\nYou dodge the Ghoul monster's attacks!");
 			new Thread(new Runnable() {
 		        public void run() {
 		            try {
@@ -2013,8 +2065,9 @@ public class StoryManager {
 	}
 	
 	public void defeatedGhoul1() {
-		animateText("You have slain the first Ghoul!"
-				+ "\n\nType \"next\" to continue");
+		player.setPosition("defeatedGhoul1");
+
+		animateText("You have slain the first Ghoul!");
 		new Thread(new Runnable() {
 	        public void run() {
 	            try {
@@ -2028,8 +2081,9 @@ public class StoryManager {
 	}
 	
 	public void defeatedGhoul2() {
-		animateText("You have slain the second Ghoul!"
-				+ "\n\nType \"next\" to continue");
+		player.setPosition("defeatedGhoul2");
+		
+		animateText("You have slain the second Ghoul!");
 		new Thread(new Runnable() {
 	        public void run() {
 	            try {
@@ -2043,9 +2097,10 @@ public class StoryManager {
 	}
 	
 	public void defeatedGhouls() {
+		player.setPosition("defeatedGhouls");
+		
 		animateText("You have slain both Ghouls!"
 				+ "\n\nType \"next\" to continue");
-		player.setPosition("defeatedGhouls");
 	}
 	
 	public void loungePostBattle() {
@@ -2062,6 +2117,8 @@ public class StoryManager {
 	}
 	
 	public void useSmallHealthPotion_Ghouls() { 
+		player.setPosition("useSmallHealthPotion_Ghouls");
+
 		player.heal(smallHealthPotion.getHealthGain());
 		if(player.getHealth() > player.getMaxHealth()) {
 			player.setHealth(player.getMaxHealth());
@@ -2082,6 +2139,8 @@ public class StoryManager {
 	}
 	
 	public void useLargeHealthPotion_Ghouls() { 
+		player.setPosition("useLargeHealthPotion_Ghouls");
+		
 		player.heal(largeHealthPotion.getHealthGain());
 		if(player.getHealth() > player.getMaxHealth()) {
 			player.setHealth(player.getMaxHealth());
@@ -2104,9 +2163,10 @@ public class StoryManager {
 	
 	// DINNER SKELETON
 	public void engageCombat_Skeleton() { 
+		player.setPosition("engageCombat_Skeleton");		
+		
 		inGameMusicClip.close();
 		playCombatSoundtrack();
-		
 		animateText("You engage combat with the Skeleton");
 		new Thread(new Runnable() {
 	        public void run() {
@@ -2145,10 +2205,17 @@ public class StoryManager {
 	}
 	
 	public void monsterTakesDamage_Skeleton() {
+		player.setPosition("monsterTakesDamage_Skeleton");
+		
 		int accuracy = new java.util.Random().nextInt(100)+1;
 		
 		if (accuracy<attackAccuracy) {
 			skeleton_Dining.takeDamage(player.getDamage());
+			
+			if(skeleton_Dining.getHealth() < 0) {
+				skeleton_Dining.setHealth(0);
+			}
+			
 			animateText("You attack the Skeleton, it takes " + player.getDamage() + " damage." + "\n\nSkeleton health = " + skeleton_Dining.getHealth());
 			new Thread(new Runnable() {
 		        public void run() {
@@ -2188,6 +2255,8 @@ public class StoryManager {
 	}
 
 	public void playerTakesDamage_Skeleton() {
+		player.setPosition("playerTakesDamage_Skeleton");
+		
 		int monsterDamage = new java.util.Random().nextInt(skeleton_Dining.getDamageMax() - skeleton_Dining.getDamageMin() + 1) + skeleton_Dining.getDamageMin();		
 		int accuracy = new java.util.Random().nextInt(100)+1;
 		
@@ -2260,6 +2329,8 @@ public class StoryManager {
 	}
 	
 	public void useSmallHealthPotion_Skeleton() { 
+		player.setPosition("useSmallHealthPotion_Skeleton");
+		
 		player.heal(smallHealthPotion.getHealthGain());
 		if(player.getHealth() > player.getMaxHealth()) {
 			player.setHealth(player.getMaxHealth());
@@ -2280,6 +2351,8 @@ public class StoryManager {
 	}
 
 	public void useLargeHealthPotion_Skeleton() { 
+		player.setPosition("useLargeHealthPotion_Skeleton");
+		
 		player.heal(largeHealthPotion.getHealthGain());
 		if(player.getHealth() > player.getMaxHealth()) {
 			player.setHealth(player.getMaxHealth());
@@ -2301,7 +2374,9 @@ public class StoryManager {
 	
 	// KITCHEN UNDEAD
 	
-	public void engageCombat_Undead() { 
+	public void engageCombat_Undead() {
+		player.setPosition("engageCombat_Undead");
+
 		inGameMusicClip.close();
 		playCombatSoundtrack();
 		
@@ -2376,10 +2451,17 @@ public class StoryManager {
 	}
 	
 	public void monsterTakesDamage_Undead1() {
+		player.setPosition("monsterTakesDamage_Undead1");
+
 		int accuracy = new java.util.Random().nextInt(100)+1;
 		
 		if (accuracy<attackAccuracy) {
 			undead1_Kitchen.takeDamage(player.getDamage());
+			
+			if(undead1_Kitchen.getHealth() < 0) {
+				undead1_Kitchen.setHealth(0);
+			}
+			
 			animateText("You attack the first Undead, it takes " + player.getDamage() + " damage." + "\n\nFirst Undead health = " + undead1_Kitchen.getHealth());
 			
 			new Thread(new Runnable() {
@@ -2424,10 +2506,16 @@ public class StoryManager {
 	}
 	
 	public void monsterTakesDamage_Undead2() {
+		player.setPosition("monsterTakesDamage_Undead2");
 		
 		int accuracy = new java.util.Random().nextInt(100)+1;
 		if (accuracy<attackAccuracy) {
 			undead2_Kitchen.takeDamage(player.getDamage());
+			
+			if(undead2_Kitchen.getHealth() < 0) {
+				undead2_Kitchen.setHealth(0);
+			}
+			
 			animateText("You attack the second Undead, it takes " + player.getDamage() + " damage." + "\n\nSecond Undead health = " + undead2_Kitchen.getHealth());
 			new Thread(new Runnable() {
 		        public void run() {
@@ -2471,10 +2559,17 @@ public class StoryManager {
 	}
 	
 	public void monsterTakesDamage_Undead3() {
+		player.setPosition("monsterTakesDamage_Undead3");
+		
 		int accuracy = new java.util.Random().nextInt(100)+1;
 		
 		if (accuracy<attackAccuracy) {
 			undead3_Kitchen.takeDamage(player.getDamage());
+			
+			if(undead3_Kitchen.getHealth() < 0) {
+				undead3_Kitchen.setHealth(0);
+			}
+			
 			animateText("You attack the third Undead, it takes " + player.getDamage() + " damage." + "\n\nThird Undead health = " + undead3_Kitchen.getHealth());
 			new Thread(new Runnable() {
 		        public void run() {
@@ -2518,6 +2613,8 @@ public class StoryManager {
 	}
 
 	public void playerTakesDamage_Undead() {
+		player.setPosition("playerTakesDamage_Undead");
+
 		int monsterDamage = new java.util.Random().nextInt(undead1_Kitchen.getDamageMax() - undead1_Kitchen.getDamageMin() + 1) + undead1_Kitchen.getDamageMin();
 		int monsterDamage2 = new java.util.Random().nextInt(undead2_Kitchen.getDamageMax() - undead2_Kitchen.getDamageMin() + 1) + undead2_Kitchen.getDamageMin();
 		int monsterDamage3 = new java.util.Random().nextInt(undead3_Kitchen.getDamageMax() - undead3_Kitchen.getDamageMin() + 1) + undead3_Kitchen.getDamageMin();
@@ -2613,12 +2710,13 @@ public class StoryManager {
 	}
 	
 	public void defeatedUndead1() {
-		animateText("You have slain the first Undead!"
-				+ "\n\nType \"next\" to continue");
+		player.setPosition("defeatedUndead1");
+		
+		animateText("You have slain the first Undead!");
 		new Thread(new Runnable() {
 	        public void run() {
 	            try {
-	                Thread.sleep(4000);
+	                Thread.sleep(5000);
 	                playerTakesDamage_Undead();
 	            } catch (InterruptedException e) {
 	                e.printStackTrace();
@@ -2628,12 +2726,13 @@ public class StoryManager {
 	}
 	
 	public void defeatedUndead2() {
-		animateText("You have slain the second Undead!"
-				+ "\n\nType \"next\" to continue");
+		player.setPosition("defeatedUndead2");
+
+		animateText("You have slain the second Undead!");
 		new Thread(new Runnable() {
 	        public void run() {
 	            try {
-	                Thread.sleep(4000);
+	                Thread.sleep(5000);
 	                playerTakesDamage_Undead();
 	            } catch (InterruptedException e) {
 	                e.printStackTrace();
@@ -2643,12 +2742,13 @@ public class StoryManager {
 	}
 	
 	public void defeatedUndead3() {
-		animateText("You have slain the third Undead!"
-				+ "\n\nType \"next\" to continue");
+		player.setPosition("defeatedUndead3");
+
+		animateText("You have slain the third Undead!");
 		new Thread(new Runnable() {
 	        public void run() {
 	            try {
-	                Thread.sleep(4000);
+	                Thread.sleep(5000);
 	                playerTakesDamage_Undead();
 	            } catch (InterruptedException e) {
 	                e.printStackTrace();
@@ -2676,6 +2776,8 @@ public class StoryManager {
 	}
 	
 	public void useSmallHealthPotion_Undead() { 
+		player.setPosition("useSmallHealthPotion_Undead");
+
 		player.heal(smallHealthPotion.getHealthGain());
 		if(player.getHealth() > player.getMaxHealth()) {
 			player.setHealth(player.getMaxHealth());
@@ -2696,6 +2798,8 @@ public class StoryManager {
 	}
 	
 	public void useLargeHealthPotion_Undead() { 
+		player.setPosition("useLargeHealthPotion_Undead");
+
 		player.heal(largeHealthPotion.getHealthGain());
 		if(player.getHealth() > player.getMaxHealth()) {
 			player.setHealth(player.getMaxHealth());
@@ -2719,6 +2823,8 @@ public class StoryManager {
 	public void engageCombat_BallroomWerewolf() { 
 		inGameMusicClip.close();
 		playCombatSoundtrack();
+		player.setPosition("engageCombat_BallroomWerewolf");
+
 		
 		animateText("You engage combat with the Werewolf");
 		new Thread(new Runnable() {
@@ -2758,10 +2864,16 @@ public class StoryManager {
 	}
 	
 	public void monsterTakesDamage_BallroomWerewolf() {
+		player.setPosition("monsterTakesDamage_BallroomWerewolf");
 		int accuracy = new java.util.Random().nextInt(100)+1;
 		
 		if (accuracy<attackAccuracy) {
 			werewolf_Ballroom.takeDamage(player.getDamage());
+			
+			if(werewolf_Ballroom.getHealth() < 0) {
+				werewolf_Ballroom.setHealth(0);
+			}
+			
 			animateText("You attack the Werewolf, it takes " + player.getDamage() + " damage." + "\n\nWerewolf health = " + werewolf_Ballroom.getHealth());
 			new Thread(new Runnable() {
 		        public void run() {
@@ -2801,6 +2913,8 @@ public class StoryManager {
 	}
 
 	public void playerTakesDamage_BallroomWerewolf() {
+		player.setPosition("playerTakesDamage_BallroomWerewolf");
+
 		int monsterDamage = new java.util.Random().nextInt(werewolf_Ballroom.getDamageMax() - werewolf_Ballroom.getDamageMin() + 1) + werewolf_Ballroom.getDamageMin();
 		int accuracy = new java.util.Random().nextInt(100)+1;
 
@@ -2871,6 +2985,8 @@ public class StoryManager {
 	}
 	
 	public void useSmallHealthPotion_BallroomWerewolf() { 
+		player.setPosition("useSmallHealthPotion_BallroomWerewolf");
+
 		player.heal(smallHealthPotion.getHealthGain());
 		if(player.getHealth() > player.getMaxHealth()) {
 			player.setHealth(player.getMaxHealth());
@@ -2891,6 +3007,8 @@ public class StoryManager {
 	}
 	
 	public void useLargeHealthPotion_BallroomWerewolf() { 
+		player.setPosition("useLargeHealthPotion_BallroomWerewolf");
+
 		player.heal(largeHealthPotion.getHealthGain());
 		if(player.getHealth() > player.getMaxHealth()) {
 			player.setHealth(player.getMaxHealth());
@@ -2912,6 +3030,7 @@ public class StoryManager {
 	
 	// TOILET GOBLIN
 	public void engageCombat_Goblin() { 
+		player.setPosition("engageCombat_Goblin");
 		inGameMusicClip.close();
 		playCombatSoundtrack();
 		
@@ -2953,7 +3072,14 @@ public class StoryManager {
 	}
 	
 	public void monsterTakesDamage_Goblin() {
+		player.setPosition("monsterTakesDamage_Goblin");
+
 		goblin_Bathroom.takeDamage(player.getDamage());
+		
+		if(goblin_Bathroom.getHealth() < 0) {
+			goblin_Bathroom.setHealth(0);
+		}
+		
 		animateText("You attack the Goblin, it takes " + player.getDamage() + " damage." + "\n\nGoblin health = " + goblin_Bathroom.getHealth());
 		new Thread(new Runnable() {
 	        public void run() {
@@ -2973,6 +3099,8 @@ public class StoryManager {
 	}
 	
 	public void playerTakesDamage_Goblin() {
+		player.setPosition("playerTakesDamage_Goblin");
+
 		int monsterDamage = new java.util.Random().nextInt(goblin_Bathroom.getDamageMax() - goblin_Bathroom.getDamageMin() + 1) + goblin_Bathroom.getDamageMin();
 
 		animateText("The Goblin attempts to swing at you from the toilet."
@@ -3018,6 +3146,8 @@ public class StoryManager {
 	}
 	
 	public void useSmallHealthPotion_Goblin() { 
+		player.setPosition("useSmallHealthPotion_Goblin");
+
 		player.heal(smallHealthPotion.getHealthGain());
 		if(player.getHealth() > player.getMaxHealth()) {
 			player.setHealth(player.getMaxHealth());
@@ -3038,6 +3168,8 @@ public class StoryManager {
 	}
 	
 	public void useLargeHealthPotion_Goblin() { 
+		player.setPosition("useLargeHealthPotion_Goblin");
+
 		player.heal(largeHealthPotion.getHealthGain());
 		if(player.getHealth() > player.getMaxHealth()) {
 			player.setHealth(player.getMaxHealth());
@@ -3059,6 +3191,7 @@ public class StoryManager {
 	
 	// CHURCH CORRUPTED HUNTER
 	public void engageCombat_Hunter() { 
+		player.setPosition("engageCombat_Hunter");
 		inGameMusicClip.close();
 		playFinalBossSoundtrack();
 		
@@ -3100,10 +3233,16 @@ public class StoryManager {
 	}
 	
 	public void monsterTakesDamage_Hunter() {
+		player.setPosition("monsterTakesDamage_Hunter");
 		int accuracy = new java.util.Random().nextInt(100)+1;
 		
 		if (accuracy<attackAccuracy) {
 			hunter_Church.takeDamage(player.getDamage());
+			
+			if(hunter_Church.getHealth() < 0) {
+				hunter_Church.setHealth(0);
+			}
+			
 			animateText("You attack the hunter, it takes " + player.getDamage() + " damage." + "\n\nHunter health = " + hunter_Church.getHealth());
 			new Thread(new Runnable() {
 		        public void run() {
@@ -3143,6 +3282,8 @@ public class StoryManager {
 	}
 	
 	public void playerTakesDamage_Hunter() {
+		player.setPosition("playerTakesDamage_Hunter");
+
 		int monsterDamage = new java.util.Random().nextInt(hunter_Church.getDamageMax() - hunter_Church.getDamageMin() + 1) + hunter_Church.getDamageMin();
 		int accuracy = new java.util.Random().nextInt(100)+1;
 
@@ -3202,6 +3343,8 @@ public class StoryManager {
 	}
 	
 	public void useSmallHealthPotion_Hunter() { 
+		player.setPosition("useSmallHealthPotion_Hunter");
+
 		player.heal(smallHealthPotion.getHealthGain());
 		if(player.getHealth() > player.getMaxHealth()) {
 			player.setHealth(player.getMaxHealth());
@@ -3222,6 +3365,8 @@ public class StoryManager {
 	}
 	
 	public void useLargeHealthPotion_Hunter() { 
+		player.setPosition("useLargeHealthPotion_Hunter");
+
 		player.heal(largeHealthPotion.getHealthGain());
 		if(player.getHealth() > player.getMaxHealth()) {
 			player.setHealth(player.getMaxHealth());
@@ -3254,7 +3399,8 @@ public class StoryManager {
 		player.setPosition("pullLeaver");
 		animateText("As you pull the lever, you hear a low rumble as the bookshelves slowly begin to shift and move, revealing a pathway that was previously hidden. "
 				+ "The door swings open, revealing a vast library on the other side. "
-				+ "You realize that you must have awoken within a secret, hidden room. ");
+				+ "You realize that you must have awoken within a secret, hidden room. "
+				+ "\n\nType \"next\" to continue...");
 	}
 	
 	public void enterLibrary() {
@@ -3268,23 +3414,15 @@ public class StoryManager {
 	}
 	
 	public void inspectLibraryBookshelf() {
+		player.setPosition("inspectLibraryBookshelf");
 		animateText("As you run your fingers along the spines of the books on the shelf, you realize that most of them are written in a language you don't understand. "
-				+ "\nThe letters are strange and twisted, and the words seem to writhe on the page. "
-				+ "\nDespite your best efforts, you cannot make sense of them. "
-				+ "\nHowever, you do manage to find a few books that are written in a language you recognize. "
-				+ "\nThey seem to be about ancient rituals and forbidden knowledge, with titles like \"The Rites of Blood\" and \"The Forbidden Tome of Arcane Lore.\" "
-				+ "\nYou can't help but feel a sense of unease as you handle these tomes, knowing that they contain dangerous secrets best left forgotten. "
-				+ "\nThe contents don’t seem to be of any help to you.");
-		new Thread(new Runnable() {
-	        public void run() {
-	            try {
-	                Thread.sleep(4000);
-	                enterLibrary();
-	            } catch (InterruptedException e) {
-	                e.printStackTrace();
-	            }
-	        }
-	    }).start();
+				+ "The letters are strange and twisted, and the words seem to writhe on the page. "
+				+ "Despite your best efforts, you cannot make sense of them. "
+				+ "\n\nHowever, you do manage to find a few books that are written in a language you recognize. "
+				+ "They seem to be about ancient rituals and forbidden knowledge, with titles like \"The Rites of Blood\" and \"The Forbidden Tome of Arcane Lore.\" "
+				+ "You can't help but feel a sense of unease as you handle these tomes, knowing that they contain dangerous secrets best left forgotten. "
+				+ "The contents don’t seem to be of any help to you."
+				+ "\n\nType \"back\" to continue...");
 	}
 	
 	public void inspectLibraryTable1() {
@@ -3323,6 +3461,8 @@ public class StoryManager {
 	}
 	
 	public void libraryTakePotions() {
+		player.setPosition("libraryTakePotions");
+
 		animateText("You pick up two large health potions and a large pouch of gold.");
 		libraryPotionsTaken = true;
 		player.addGold(105);
@@ -3345,6 +3485,8 @@ public class StoryManager {
 	}
 	
 	public void libraryTakeSpellbook() {
+		player.setPosition("libraryTakeSpellbook");
+
 		animateText("You pick up the spellbook. You can now cast spells within combat.");
 		librarySpellbookTaken = true;
 		new Thread(new Runnable() {
@@ -3410,6 +3552,8 @@ public class StoryManager {
 	}
 	
 	public void takeStorageRoomWeapon() {
+		player.setPosition("takeStorageRoomWeapon");
+
 		animateText("You pick up the scythe alongside some gold.");
 		scytheTaken=true;
 		player.addGold(70);
@@ -3458,7 +3602,7 @@ public class StoryManager {
 	}
 	
 	public void enterLoungePostBattle() {
-		player.setPosition("enterLounge");
+		player.setPosition("enterLoungePostBattle");
 		animateText("You enter the Lounge, you notice the worn yet comfortable furniture with plush cushions and intricate patterns on the upholstery. "
 				+ "The room is dimly lit by the flickering flames of the fireplace, casting swaying shadows throughout the room. "
 				+ "The walls are adorned with ornate tapestries, depicting scenes of ancient battles and hunts. "
@@ -3469,23 +3613,29 @@ public class StoryManager {
 	
 	public void restAtFireplace() {
 		player.setPosition("restAtFireplace");
+		player.setHealth(player.getMaxHealth());
+		Game.getGameFrame().getInGamePanel().changeHealthNum(player.getHealth());
+		
 		animateText("You sit on the furniture before the campfire and let out a deep sigh of relief. "
 				+ "The warmth of the fire washes over you, and you feel your muscles relaxing as you let yourself rest. "
 				+ "You gaze at the flames, mesmerized by the way they dance and flicker. "
 				+ "As you begin to drift off, your mind feels clear and free from worry. "
 				+ "When you awaken, you feel rejuvenated and refreshed. "
 				+ "You take a deep breath, feeling as though all of your injuries and ailments have been healed. "
-				+ "You have been healed to full health.");
+				+ "You have been healed to full health."
+				+ "\n\nType \"next\" to continue...");
 	}
 	
 	public void restAtFireplace2() {
 		player.setPosition("restAtFireplace2");
 		animateText("It is safe to change weapons here."
-				+ "\n\n1.Change weapon"
-				+ "\n2.Leave fireplace");
+				+ "\n\n1. Change weapon"
+				+ "\n2. Leave fireplace");
 	}
 	
 	public void takeWeapon1_Fireplace() {
+		player.setPosition("takeWeapon1_Fireplace");
+		
 		player.setWeapon(ceremonialDagger);
 		animateText("You have changed your weapon to the Ceremonial Dagger");
 		new Thread(new Runnable() {
@@ -3501,6 +3651,8 @@ public class StoryManager {
 	}
 	
 	public void takeWeapon2_Fireplace() {
+		player.setPosition("takeWeapon2_Fireplace");
+
 		player.setWeapon(dualDaggers);
 		animateText("You have changed your weapon to the Dual Daggers");
 		new Thread(new Runnable() {
@@ -3516,6 +3668,8 @@ public class StoryManager {
 	}
 	
 	public void takeWeapon3_Fireplace() {
+		player.setPosition("takeWeapon3_Fireplace");
+
 		player.setWeapon(soulBlade);
 		animateText("You have changed your weapon to the Soul Blade");
 		new Thread(new Runnable() {
@@ -3531,6 +3685,8 @@ public class StoryManager {
 	}
 	
 	public void takeWeapon4_Fireplace() {
+		player.setPosition("takeWeapon4_Fireplace");
+
 		player.setWeapon(sorcerersWand);
 		animateText("You have changed your weapon to the Sorcerers Wand");
 		new Thread(new Runnable() {
@@ -3546,6 +3702,8 @@ public class StoryManager {
 	}
 	
 	public void takeWeapon5_Fireplace() {
+		player.setPosition("takeWeapon5_Fireplace");
+
 		player.setWeapon(scythe);
 		animateText("You have changed your weapon to the Scythe");
 		new Thread(new Runnable() {
@@ -3561,6 +3719,8 @@ public class StoryManager {
 	}
 	
 	public void takeWeapon6_Fireplace() {
+		player.setPosition("takeWeapon6_Fireplace");
+
 		player.setWeapon(greatSword);
 		animateText("You have changed your weapon to the Great Sword");
 		new Thread(new Runnable() {
@@ -3576,6 +3736,8 @@ public class StoryManager {
 	}
 	
 	public void changeWeapon_Fireplace() {
+		player.setPosition("changeWeapon_Fireplace");
+		
 		String daggerAvailable = "Not found";
 		String dualDaggersAvailable = "Not found";
 		String soulBladeAvailable = "Not found";
@@ -3598,17 +3760,18 @@ public class StoryManager {
 		if(scytheTaken==true) {
 			scytheAvailable = "Available";
 		}
-		if(greatSwordTaken=true) {
+		if(greatSwordTaken==true) {
 			greatSwordAvailable = "Available";
 		}
-		player.setPosition("changeWeapon_Fireplace");
+		
 		animateText("Choose a weapon to equip:"
 				+ "\n\n1. Ceremonial Dagger" + "(" + daggerAvailable + ")" 
 				+ "\n2. Soul Blade" + "(" + dualDaggersAvailable + ")" 
 				+ "\n3. Dual Daggers" + "(" + soulBladeAvailable + ")" 
 				+ "\n4. Sorcerers Wand" + "(" + sorcerersWandAvailable + ")" 
 				+ "\n5. Scythe" + "(" + scytheAvailable + ")"
-				+ "\n6. Great Sword" + "(" + greatSwordAvailable + ")" );
+				+ "\n6. Great Sword" + "(" + greatSwordAvailable + ")" 
+				+ "\n7. Leave");
 	}
 	
 	public void inspectGhouls() {
@@ -3626,6 +3789,8 @@ public class StoryManager {
 	}
 	
 	public void takePocketWatch() {
+		player.setPosition("takePocketWatch");
+
 		animateText("You take the sack of gold and the pocket watch.");
 		pocketWatchTaken=true;
 		player.addGold(60);
@@ -3654,11 +3819,11 @@ public class StoryManager {
 	public void inspectArtifacts() {
 		player.setPosition("inspectArtifacts");
 		animateText("You approach the three glass containers; your eyes are immediately drawn to the artifacts they hold. "
-				+ "The first container holds a long, curved blade with intricate carvings etched into the handle. "
+				+ "\n\n1. The first container holds a long, curved blade with intricate carvings etched into the handle. "
 				+ "You can almost feel the weight of the weapon in your hand as you study it. "
-				+ "The second container contains a pair of violet wickedly sharp daggers, their dual blades glinting in the light. "
+				+ "\n\n2. The second container contains a pair of violet wickedly sharp daggers, their dual blades glinting in the light. "
 				+ "You imagine the ease with which they could slice through flesh and bone. "
-				+ "Finally, your gaze lands on the third container, which holds a slender wand crafted from what appears to be polished oak wood. "
+				+ "\n\n3. Finally, your gaze lands on the third container, which holds a slender wand crafted from what appears to be polished oak wood. "
 				+ "You can't help but wonder what kind of magical abilities the wand might possess in the right hands.");
 	}
 	
@@ -3674,7 +3839,8 @@ public class StoryManager {
 		animateText("As you place your hand on the smooth glass surface of the container, you feel a sudden rush of energy coursing through your body. "
 				+ "The glass begins to pulsate as if responding to your touch, and a dark, ominous smoke seeps out of the seams of the container. "
 				+ "In a blink of an eye, the other artefacts vanish into thin air, leaving only the blade behind, which materializes in your hand with a sudden weight. "
-				+ "The air around you is thick with a sense of otherworldly power, and you can't help but wonder what other secrets this place might hold.");
+				+ "The air around you is thick with a sense of otherworldly power, and you can't help but wonder what other secrets this place might hold."
+				+ "\n\nType \"next\" to continue...");
 	}
 	
 	public void takeArtifact2() {
@@ -3683,7 +3849,8 @@ public class StoryManager {
 		animateText("As you place your hand on the smooth glass surface of the container, you feel a sudden rush of energy coursing through your body. "
 				+ "The glass begins to pulsate as if responding to your touch, and a dark, ominous smoke seeps out of the seams of the container. "
 				+ "In a blink of an eye, the other artefacts vanish into thin air, leaving only the dual daggers behind, which materializes in your hands with a sudden weight. "
-				+ "The air around you is thick with a sense of otherworldly power, and you can't help but wonder what other secrets this place might hold.");
+				+ "The air around you is thick with a sense of otherworldly power, and you can't help but wonder what other secrets this place might hold."
+				+ "\n\nType \"next\" to continue...");
 	}
 	
 	public void takeArtifact3() {
@@ -3692,7 +3859,8 @@ public class StoryManager {
 		animateText("As you place your hand on the smooth glass surface of the container, you feel a sudden rush of energy coursing through your body. "
 				+ "The glass begins to pulsate as if responding to your touch, and a dark, ominous smoke seeps out of the seams of the container. "
 				+ "In a blink of an eye, the other artefacts vanish into thin air, leaving only the wand behind, which materializes in your hand with a sudden weight. "
-				+ "The air around you is thick with a sense of otherworldly power, and you can't help but wonder what other secrets this place might hold.");
+				+ "The air around you is thick with a sense of otherworldly power, and you can't help but wonder what other secrets this place might hold."
+				+ "\n\nType \"next\" to continue...");
 	}
 	
 	public void enterDiningRoom() {
@@ -3748,6 +3916,8 @@ public class StoryManager {
 	}
 	
 	public void takeRing() {
+		player.setPosition("takeRing");
+
 		animateText("You take the precious ring off the skeleton and a large sack of gold on the table.");
 		ringTaken=true;
 		player.addGold(120);
@@ -3769,13 +3939,14 @@ public class StoryManager {
 
 	}
 	
-	public void enterKitchen() {
+	public void enterKitchen() { 
 		player.setPosition("enterKitchen");
 		animateText("You step into the kitchen, the smell of rotting food hits your nose. "
 				+ "The tables in the centre and along the walls are cluttered with pots, pans, and utensils, some of them covered in a thick layer of grime. "
 				+ "Suddenly, you hear shuffling and groaning, and turning around you see several workers, now turned undead, hard at work. "
 				+ "Their skin is mottled and grey, and their eyes are clouded over, yet they move with an unnatural speed. "
-				+ "They charge towards you, their hands reaching out to grab you.");
+				+ "They charge towards you, their hands reaching out to grab you."
+				+ "\n\nType “next” to continue.");
 	}
 	
 	public void enterKitchenPostBattle() {
@@ -3817,8 +3988,7 @@ public class StoryManager {
 		player.setPosition("enterBathroomPostBattle");
 		animateText("You step back into the bathroom; the foul stench of filth overwhelms your senses. "
 				+ "The walls are coated in grime and the tiles on the floor are cracked and dirty. The stench of the goblin's filth has been replaced by the unmistakable odour of death. "
-				+ "You see the lifeless body of the goblin slumped against the wall, a pool of blood spreading out beneath it. "
-				+ "You notice the goblin still has a grasp on a small rusty key. ");
+				+ "You see the lifeless body of the goblin slumped against the wall, a pool of blood spreading out beneath it. ");
 	}
 	
 	public void inspectGoblin() {
@@ -3834,12 +4004,14 @@ public class StoryManager {
 	}
 	
 	public void takeRustyKey() {
+		player.setPosition("takeRustyKey");
+
 		rustyKeyTaken=true;
 		animateText("You take the rusty key.");
 		new Thread(new Runnable() {
 	        public void run() {
 	            try {
-	                Thread.sleep(7000);
+	                Thread.sleep(5000);
 	                enterBathroomPostBattle();
 	            } catch (InterruptedException e) {
 	                e.printStackTrace();
@@ -3864,15 +4036,18 @@ public class StoryManager {
 	}
 	
 	public void takeGauntlet() { 
+		player.setPosition("takeGauntlet");
+
 		animateText("You take and equip the gauntlet and the pouch of gold. Your max health has increased by 25 health.");
 		gauntletTaken=true;
 		player.addExtraMaxHealth(25);
 		player.addGold(55);
 		Game.getGameFrame().getInGamePanel().changeGoldNum(player.getGold());
+		Game.getGameFrame().getInGamePanel().changeHealthNum(player.getHealth());
 		new Thread(new Runnable() {
 	        public void run() {
 	            try {
-	                Thread.sleep(4000);
+	                Thread.sleep(7000);
 	                inspectViewingFloorEmpty();
 	            } catch (InterruptedException e) {
 	                e.printStackTrace();
@@ -3882,6 +4057,8 @@ public class StoryManager {
 	}
 	
 	public void openChest() {
+		player.setPosition("openChest");
+
 		animateText("You open the chest and take the church key.");
 		churchKeyTaken=true;
 		new Thread(new Runnable() {
@@ -3897,6 +4074,8 @@ public class StoryManager {
 	}
 	
 	public void openChestEmpty() {
+		player.setPosition("openChestEmpty");
+
 		animateText("You open the chest and see its empty.");
 		new Thread(new Runnable() {
 	        public void run() {
@@ -3914,12 +4093,12 @@ public class StoryManager {
 		player.setPosition("inspectViewingFloor");
 		animateText("You inspect the viewing floor of the ballroom. "
 				+ "There seems to be nothing around other than a small bag with some gold in it. "
-				+ "You look a bit further and find a pair of gauntlets");
+				+ "You look a bit further and find a pair of gauntlets.");
 	}
 
 	public void inspectViewingFloorEmpty() {
 		player.setPosition("inspectViewingFloorEmpty");
-		animateText("You inspect the viewing floor of the ballroom."
+		animateText("You inspect the viewing floor of the ballroom. "
 				+ "There seems to be nothing around.");
 	}
 	
@@ -3929,7 +4108,8 @@ public class StoryManager {
 				+ "The steps creak under your weight as you take the first few steps up. "
 				+ "However, as you ascend further, you notice a pile of debris blocking your way. "
 				+ "Fallen rubble, shattered glass, and decaying wooden planks create an insurmountable barrier. "
-				+ "It's clear that this part of the house has been long abandoned and neglected. ");
+				+ "It's clear that this part of the house has been long abandoned and neglected. "
+				+ "\n\nType \"back\" to go back to the main hall...");
 	}
 	
 	public void enterEntranceHall() {
@@ -3957,12 +4137,14 @@ public class StoryManager {
 	}
 	
 	public void takeAmulet() {
+		player.setPosition("takeAmulet");
+
 		animateText("You take the amulet off the hook.");
 		amuletTaken=true;
 		new Thread(new Runnable() {
 	        public void run() {
 	            try {
-	                Thread.sleep(4000);
+	                Thread.sleep(5000);
 	                openClosetDoorEmpty();
 	            } catch (InterruptedException e) {
 	                e.printStackTrace();
@@ -3979,7 +4161,7 @@ public class StoryManager {
 				+ "Despite the forest being dense and foreboding, a pathway cuts through the centre of the forest like a sharp blade, slicing through the trees and underbrush with ease.");
 	}
 	
-	public void crossRoad1() {
+	public void crossRoad1() {  
 		player.setPosition("crossRoad1");
 		animateText("You approach the crossroad, you see three paths diverging in different directions. "
 				+ "There is one path that leads north, another leads east and the final one leads south back towards the manor.");
@@ -3994,37 +4176,43 @@ public class StoryManager {
 	}
 	
 	public void manorFront() {
-	player.setPosition("manorFront");
+		player.setPosition("manorFront");
 		animateText("You approach the front of the manor, the imposing structure looms above you, its dark and Gothic architecture casting eerie shadows across the grounds. "
 				+ "The size of the building is more apparent up close, and you can see the impressive scale of the structure. "
 				+ "The doors are slightly ajar, and you can hear a faint creaking sound as they sway in the wind. ");
 	}
 	
-	public void crossRoad2() {player.setPosition("crossRoad2");
-		animateText("You approach the crossroad, you see four paths diverging in different directions."
+	public void crossRoad2() { 
+		player.setPosition("crossRoad2");
+		animateText("You approach the crossroad, you see four paths diverging in different directions. "
 				+ "There is one path that leads north, another leads west, a third one north-east and the final one leads south back towards the manor.");
 		
 	}
 	
 	public void restLake() {
 		player.setPosition("restLake");
+		player.setHealth(player.getMaxHealth());
+		Game.getGameFrame().getInGamePanel().changeHealthNum(player.getHealth());
+		
 		animateText("As you sit by the tranquil lake, your eyes are drawn to the gentle ebb and flow of the water. "
 				+ "The soothing rhythm lulls you into a peaceful trance, and before you know it, your head begins to nod as your eyelids grow heavy. "
 				+ "The world around you fades away, replaced by the peacefulness of the lake. "
-				+ "The last thing you remember is the sound of the lapping waves before drifting off into a deep slumber."
-				+ "You reawaken some time later."
-				+ "You have been healed to full health."
+				+ "The last thing you remember is the sound of the lapping waves before drifting off into a deep slumber. "
+				+ "You reawaken some time later. "
+				+ "You have been healed to full health. "
 				+ "\n\nType \"next\" to continue");
 	}
 	
 	public void restLake2() {
 		player.setPosition("restLake2");
 		animateText("It is safe to change weapons here."
-				+ "\n\n1.Change weapon"
-				+ "\n2.Leave lake");
+				+ "\n\n1. Change weapon"
+				+ "\n2. Leave lake");
 	}
 	
 	public void takeWeapon1_Lake() {
+		player.setPosition("takeWeapon1_Lake");
+
 		player.setWeapon(ceremonialDagger);
 		animateText("You have changed your weapon to the Ceremonial Dagger");
 		new Thread(new Runnable() {
@@ -4040,6 +4228,8 @@ public class StoryManager {
 	}
 	
 	public void takeWeapon2_Lake() {
+		player.setPosition("takeWeapon2_Lake");
+
 		player.setWeapon(dualDaggers);
 		animateText("You have changed your weapon to the Dual Daggers");
 		new Thread(new Runnable() {
@@ -4055,6 +4245,8 @@ public class StoryManager {
 	}
 	
 	public void takeWeapon3_Lake() {
+		player.setPosition("takeWeapon3_Lake");
+
 		player.setWeapon(soulBlade);
 		animateText("You have changed your weapon to the Soul Blade");
 		new Thread(new Runnable() {
@@ -4070,6 +4262,8 @@ public class StoryManager {
 	}
 	
 	public void takeWeapon4_Lake() {
+		player.setPosition("takeWeapon4_Lake");
+
 		player.setWeapon(sorcerersWand);
 		animateText("You have changed your weapon to the Sorcerers Wand");
 		new Thread(new Runnable() {
@@ -4085,6 +4279,8 @@ public class StoryManager {
 	}
 
 	public void takeWeapon5_Lake() {
+		player.setPosition("takeWeapon5_Lake");
+
 		player.setWeapon(scythe);
 		animateText("You have changed your weapon to the Scythe");
 		new Thread(new Runnable() {
@@ -4130,7 +4326,8 @@ public class StoryManager {
 				+ "\n2. Soul Blade" + "(" + dualDaggersAvailable + ")" 
 				+ "\n3. Dual Daggers" + "(" + soulBladeAvailable + ")" 
 				+ "\n4. Sorcerers Wand" + "(" + sorcerersWandAvailable + ")" 
-				+ "\n5. Scythe" + "(" + scytheAvailable + ")" ); 
+				+ "\n5. Scythe" + "(" + scytheAvailable + ")" 
+				+ "\n6. Leave"); 
 	}
 	
 	public void outsideChurch() {
@@ -4144,7 +4341,7 @@ public class StoryManager {
 
 	public void enterChurch() {
 		reEnterChurch=true;
-		player.setPosition("outsideChurch");
+		player.setPosition("enterChurch");
 		animateText("You slide the key into the rusted lock and turn it, the heavy doors of the abandoned church slowly creak open. "
 				+ "You step inside the abandoned church, and the musty smell of decay fills your nostrils. "
 				+ "A figure begins to emerge from the shadows. "
@@ -4255,6 +4452,7 @@ public class StoryManager {
 	}
 	
 	public void traderTradeWeapon() {
+		player.setPosition("traderTradeWeapon");	
 		player.addGold(-300);
 		Game.getGameFrame().getInGamePanel().changeGoldNum(player.getGold());
 		greatSwordTaken=true;
@@ -4272,6 +4470,7 @@ public class StoryManager {
 	}
 	
 	public void traderTradePotions() {
+		player.setPosition("traderTradePotions");	
 		player.addGold(-140);
 		Game.getGameFrame().getInGamePanel().changeGoldNum(player.getGold());
 		potionsTakenTrader=true;
@@ -4290,6 +4489,7 @@ public class StoryManager {
 	}
 	
 	public void traderTradeBoots() {
+		player.setPosition("traderTradeBoots");	
 		bootsTaken=true;
 		player.addExtraMaxHealth(30);
 		animateText("Thank you for your business!");
@@ -4306,6 +4506,7 @@ public class StoryManager {
 	}
 	
 	public void traderTradeChestplate() {
+		player.setPosition("traderTradeChestplate");	
 		chestplateTaken=true;
 		player.addExtraMaxHealth(50);
 		animateText("Thank you for your business!");
@@ -4323,6 +4524,7 @@ public class StoryManager {
 	}
 
 	public void traderTradeHelmet() {
+		player.setPosition("traderTradeHelmet");	
 		helmetTaken=true;
 		player.addExtraMaxHealth(35);
 		animateText("Thank you for your business!");
